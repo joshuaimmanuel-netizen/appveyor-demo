@@ -1,0 +1,38 @@
+# .github/workflows/deploy.yml
+name: Python Deployment
+
+on:
+  push:
+    branches:
+      - main  # Run on push to the main branch; adjust if you use a different branch
+  workflow_dispatch:  # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run main.py
+        run: python main.py
+
+      - name: Save output as artifact
+        run: |
+          python main.py > hello-world-output.txt
+        # Upload the output file as an artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: hello-world-output
+          path: hello-world-output.txt
